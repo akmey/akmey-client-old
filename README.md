@@ -7,6 +7,10 @@ Add or remove keys from Akmey, all automatically !
 ## How does this work?
 
 Download the [binary release](https://github.com/akmey/akmey-client/releases) and just let the magic do!
+An install script is bundled with repository.
+
+**Warning!** These binary releases are compiled with libc6 2.24. So you must have this version or greater to run these binaries
+The script can also compile for you, run `bash install.sh compile`
 
 `akmey i <username>` - ta-da!
 

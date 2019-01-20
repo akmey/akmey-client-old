@@ -25,9 +25,9 @@ if [[ $EUID -ne 0 ]]; then
     tput sgr 0
     exit 1
 else
-    if [ -e akmey ]
+    if [ -e bin/akmey ]
     then
-        cp akmey /usr/local/bin
+        cp bin/akmey /usr/local/bin
         tput setaf 2
         echo "Enjoy keys with akmey command !"
         tput sgr 0
