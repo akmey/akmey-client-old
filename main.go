@@ -102,7 +102,7 @@ func main() {
 
 	app.Name = "akmey"
 	app.Usage = "Add/Remove SSH keys to grant access to your friends, coworkers, etc..."
-	app.Version = "0.1.1-alpha"
+	app.Version = "0.1.2-alpha"
 	app.Copyright = "GNU GPL v3 or later"
 	app.Author = "Akmey contributors"
 	app.Email = "akmey@leonekmi.fr"
@@ -126,7 +126,7 @@ func main() {
 		{
 			Name:    "install",
 			Aliases: []string{"i", "get", "add"},
-			Usage:   "Install someone's key(s), sepcifying his e-mail or his username",
+			Usage:   "Install someone's key(s), sepcifying its e-mail or its username",
 			Action: func(c *cli.Context) error {
 				db, err := initFileDB(storage, dest)
 				defer db.Close()
@@ -190,7 +190,7 @@ func main() {
 		},
 		{
 			Name:    "uninstall",
-			Aliases: []string{"u", "remove"},
+			Aliases: []string{"u", "r", "remove"},
 			Usage:   "Uninstall someone's key(s), specifying his e-mail or his username",
 			Action: func(c *cli.Context) error {
 				db, err := initFileDB(storage, dest)

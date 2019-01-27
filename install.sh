@@ -16,7 +16,7 @@ echo "
 Akmey - Install script for Linux
 "
 
-confirm "*Compile* Akmey client in /usr/local/bin/ [y/N]"
+confirm "Compile the Akmey client and install it to /usr/local/bin [y/N]"
 	path_to_executable=$(command -v go)
 	if [ -x "$path_to_executable" ] ; then
 		echo "Go found: $path_to_executable"
@@ -28,7 +28,7 @@ confirm "*Compile* Akmey client in /usr/local/bin/ [y/N]"
 		else
 			if [ -f main.go ]
 			then
-				go get github.com/mattn/go-sqlite3 github.com/mitchellh/go-homedir github.com/schollz/progressbar github.com/urfave/cli
+				go get -v github.com/mattn/go-sqlite3 github.com/mitchellh/go-homedir github.com/schollz/progressbar github.com/urfave/cli gopkg.in/resty.v1
 				go build -o bin/akmey
 				chmod 755 bin/akmey
 				cp bin/akmey /usr/local/bin
