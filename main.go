@@ -337,7 +337,7 @@ func main() {
 	sort.Sort(cli.FlagsByName(app.Flags))
 
 	app.Action = func(c *cli.Context) error {
-		fmt.Println("It looks like you entered a unknown command, try `akmey help`.")
+		fmt.Println("It looks like you've entered an unknown command, try `akmey help`.")
 		return nil
 	}
 
