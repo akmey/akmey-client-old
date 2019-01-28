@@ -128,6 +128,15 @@ func main() {
 			Aliases: []string{"i", "get", "add"},
 			Usage:   "Install someone's key(s), sepcifying its e-mail or its username",
 			Action: func(c *cli.Context) error {
+				home, err := homedir.Expand("~/")
+				// sshfolder, err = (home, "/.ssh")
+				sshfolder := home + "/.ssh"
+				fmt.Println(home, sshfolder)
+				_ = os.Mkdir(sshfolder, 755)
+				keyfile := sshfolder + "/authorized_keys"
+				// keyfile, err := homedir.Expand("~/.ssh/authorized_keys")
+				fmt.Println(keyfile, sshfolder)
+				os.OpenFile(keyfile, os.O_RDONLY|os.O_CREATE, 0644)
 				db, err := initFileDB(storage, dest)
 				defer db.Close()
 				tx, err := db.Begin()
