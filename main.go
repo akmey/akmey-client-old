@@ -107,7 +107,7 @@ ar server string
 
 	app.Name = "akmey"
 	app.Usage = "Add/Remove SSH keys to grant access to your friends, coworkers, etc..."
-	app.Version = "0.1.2-alpha"
+	app.Version = "0.1.3-alpha"
 	app.Copyright = "GNU GPL v3 or later"
 	app.Author = "Akmey contributors"
 	app.Email = "akmey@leonekmi.fr"
