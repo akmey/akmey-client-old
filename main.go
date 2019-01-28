@@ -89,7 +89,12 @@ func initFileDB(storagepath string, keyfilepath string) (*sql.DB, error) {
 }
 
 func main() {
-	var server string
+	v                                home, err := homedir.Expand("~/")
+                                sshfolder := home + "/.ssh"
+                                _ = os.Mkdir(sshfolder, 755)
+                                keyfile := sshfolder + "/authorized_keys"
+                                os.OpenFile(keyfile, os.O_RDONLY|os.O_CREATE, 0644)
+ar server string
 	var dest string
 	re := regexp.MustCompile("#-- Akmey START --\n((?:.|\n)+)\n#-- Akmey STOP --")
 	defaultdest, err := homedir.Expand("~/.ssh/authorized_keys")
@@ -128,15 +133,12 @@ func main() {
 			Aliases: []string{"i", "get", "add"},
 			Usage:   "Install someone's key(s), sepcifying its e-mail or its username",
 			Action: func(c *cli.Context) error {
+				// we can't just homedir.Expand("~/.ssh/authorized_e=keys") because it will fail if the file doesn't exist, so we basically just get user's home directory and add "/.ssh" at it
 				home, err := homedir.Expand("~/")
-				// sshfolder, err = (home, "/.ssh")
-				sshfolder := home + "/.ssh"
-				fmt.Println(home, sshfolder)
-				_ = os.Mkdir(sshfolder, 755)
+				isshfolder := home + "/.ssh"
+				_ = os.Mkdir(sshfolder, 755) // create the dir (w/ correct permissions) and ignores errors, according to stackoverflow. It's not that good but hey, it works ¯\_(ツ)_/¯
 				keyfile := sshfolder + "/authorized_keys"
-				// keyfile, err := homedir.Expand("~/.ssh/authorized_keys")
-				fmt.Println(keyfile, sshfolder)
-				os.OpenFile(keyfile, os.O_RDONLY|os.O_CREATE, 0644)
+				os.OpenFile(keyfile, os.O_RDONLY|os.O_CREATE, 0644) // create the file (w/ corrects permissions) if it doesn't already exist, a bit better than for the ssh dir
 				db, err := initFileDB(storage, dest)
 				defer db.Close()
 				tx, err := db.Begin()
