@@ -203,7 +203,7 @@ func main() {
 				defer db.Close()
 				tx, err := db.Begin()
 				cfe(err)
-				checkstmt, err := tx.Prepare("select id from users where email = ? or name = ?")
+				checkstmt, err := tx.Prepare("select id from users where email = ? or name = ? collate nocase")
 				cfe(err)
 				var check string
 				err = checkstmt.QueryRow(c.Args().First(), c.Args().First()).Scan(&check)
