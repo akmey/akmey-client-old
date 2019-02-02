@@ -191,6 +191,7 @@ func main() {
 				}
 				tx.Commit()
 				bar.Add(1)
+				fmt.Println("\n")
 				return nil
 			},
 		},
@@ -268,6 +269,7 @@ func main() {
 				cfe(err)
 				tx.Commit()
 				bar.Add(1)
+				fmt.Println("\n")
 				return nil
 			},
 		},
