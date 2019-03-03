@@ -149,6 +149,7 @@ func main() {
 				err = nil
 				stmt, err := tx.Prepare("insert into users(id, name, email) values(?, ?, ?)")
 				cfe(err)
+				// id = key id on server's side, value = the key itself, comment = key name, userid = user's id, btw the uid is not working rn
 				stmt2, err := tx.Prepare("insert into keys(id, value, comment, userid) values(?, ?, ?, ?)")
 				cfe(err)
 				defer checkstmt.Close()
