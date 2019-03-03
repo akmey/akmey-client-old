@@ -21,19 +21,19 @@ import (
 	resty "gopkg.in/resty.v1"
 )
 
-// SSHKey is an SSH keu reprensentation used for the API
+// SSHKey is an SSH key reprensentation used for the API
 type SSHKey struct {
 	ID       float64
 	Key      string
 	Comment  string
-	UserID   float64
+	User     User
 	LastEdit float64
 }
 
 // User is a user representation used for the API
 type User struct {
 	ID       float64
-	Username string
+	Name     string
 	Email    string
 	Keys     []SSHKey
 }
@@ -163,7 +163,7 @@ func main() {
 				//fmt.Println(user)
 				// Step 2 : Fetch the keys in a beautiful string
 				for _, key := range user.Keys {
-					stmt2.Exec(key.ID, key.Key, key.Comment, key.UserID)
+					stmt2.Exec(key.ID, key.Key, key.Comment, key.User.ID)
 					tobeinserted += key.Key + " " + key.Comment + "\n"
 				}
 				if tobeinserted == "" {
@@ -171,7 +171,7 @@ func main() {
 					os.Exit(1)
 				}
 				bar.Add(1)
-				stmt.Exec(user.ID, user.Username, user.Email)
+				stmt.Exec(user.ID, user.Name, user.Email)
 				dat, err := ioutil.ReadFile(dest)
 				cfe(err)
 				match := re.FindStringSubmatch(string(dat))
