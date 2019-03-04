@@ -82,7 +82,7 @@ func initFileDB(storagepath string, keyfilepath string) (*sql.DB, error) {
 	cfe(err)
 	sqlStmt := `
 	create table if not exists users (id integer not null, name text, email text);
-	create table if not exists keys (id integer not null, comment text, value text, userid integer not null);
+	create table if not exists keys (id integer not null, comment text, value text, user_id integer not null);
 	`
 	_, err = db.Exec(sqlStmt)
 	return db, err
@@ -150,7 +150,7 @@ func main() {
 				stmt, err := tx.Prepare("insert into users(id, name, email) values(?, ?, ?)")
 				cfe(err)
 				// id = key id on server's side, value = the key itself, comment = key name, userid = user's id, btw the uid is not working rn
-				stmt2, err := tx.Prepare("insert into keys(id, value, comment, userid) values(?, ?, ?, ?)")
+				stmt2, err := tx.Prepare("insert into keys(id, value, comment, user_id) values(?, ?, ?, ?)")
 				cfe(err)
 				defer checkstmt.Close()
 				defer stmt.Close()
@@ -164,7 +164,7 @@ func main() {
 				//fmt.Println(user)
 				// Step 2 : Fetch the keys in a beautiful string
 				for _, key := range user.Keys {
-					stmt2.Exec(key.ID, key.Key, key.Comment, key.User.ID)
+					stmt2.Exec(key.ID, key.Key, key.Comment, user.ID)
 					tobeinserted += key.Key + " " + key.Comment + "\n"
 				}
 				if tobeinserted == "" {
@@ -218,7 +218,7 @@ func main() {
 				cfe(err)
 				stmt2, err := tx.Prepare("delete from keys where value = ?")
 				cfe(err)
-				stmt3, err := tx.Prepare("select * from keys where userid = ?")
+				stmt3, err := tx.Prepare("select * from keys where user_id = ?")
 				cfe(err)
 				defer checkstmt.Close()
 				defer stmt.Close()
