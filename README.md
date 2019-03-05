@@ -12,6 +12,13 @@ An install script is bundled with repository.
 **Warning!** These binary releases are compiled with libc6 2.24. So you must have this version or greater to run these binaries
 The script can also compile for you, run `bash install.sh`
 
+## Install
+
+You can now install Akmey from AUR
+```
+yay -S akmey
+```
+
 `akmey i <username>` - ta-da!
 
 ![Demo](demo.gif) 
