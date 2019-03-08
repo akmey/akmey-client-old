@@ -141,12 +141,6 @@ func main() {
 			Aliases: []string{"i", "get", "add"},
 			Usage:   "Install someone's key(s), sepcifying its e-mail or its username",
 			Action: func(c *cli.Context) error {
-				  app.Flags = []cli.Flag{
-				cli.StringFlag{
-					Name: "key",
-					Usage: "Specify a key by it's name",
-					},
-				}
 				// we can't just homedir.Expand("~/.ssh/authorized_e=keys") because it will fail if the file doesn't exist, so we basically just get user's home directory and add "/.ssh" at it
 				home, err := homedir.Expand("~/")
 				sshfolder := home + "/.ssh"
