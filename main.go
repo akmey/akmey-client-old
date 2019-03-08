@@ -59,6 +59,19 @@ func fetchUser(user string, server string) (User, error) {
 	return f, err
 }
 
+// fetchUserSpecificKey returns User named `user` on the `server`, only with a specific key
+func fetchUserSpecificKey(key string, server string, user string) (User, error) {
+	resp, err := resty.R().
+		SetHeader("Content-Type", "application/x-www-form-urlencoded").
+		SetHeader("Accept", "application/json").
+		// api path + user/email + filter to search + comment
+		Get(server + "/api/user/match/" + user + "?filter=" + key)
+	cfe(err)
+	var f User
+	err = json.Unmarshal(resp.Body(), &f)
+	return f, err
+}
+
 // CreateDirIfNotExist creates `dir` if it not exists
 func CreateDirIfNotExist(dir string) {
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
@@ -128,6 +141,12 @@ func main() {
 			Aliases: []string{"i", "get", "add"},
 			Usage:   "Install someone's key(s), sepcifying its e-mail or its username",
 			Action: func(c *cli.Context) error {
+				  app.Flags = []cli.Flag{
+				cli.StringFlag{
+					Name: "key",
+					Usage: "Specify a key by it's name",
+					},
+				}
 				// we can't just homedir.Expand("~/.ssh/authorized_e=keys") because it will fail if the file doesn't exist, so we basically just get user's home directory and add "/.ssh" at it
 				home, err := homedir.Expand("~/")
 				sshfolder := home + "/.ssh"
@@ -158,6 +177,7 @@ func main() {
 				bar := progressbar.New(3)
 				var tobeinserted string
 				// Step 1 : fetch the user
+				// let's verify if --key=<comment> has been entered
 				user, err := fetchUser(c.Args().First(), server)
 				cfe(err)
 				bar.Add(1)
