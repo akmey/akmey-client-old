@@ -13,6 +13,7 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"flag"
 
 	_ "github.com/mattn/go-sqlite3"
 	homedir "github.com/mitchellh/go-homedir"
@@ -104,6 +105,7 @@ func initFileDB(storagepath string, keyfilepath string) (*sql.DB, error) {
 func main() {
 	var server string
 	var dest string
+	var key string
 	re := regexp.MustCompile("#-- Akmey START --\n((?:.|\n)+)\n#-- Akmey STOP --")
 	defaultdest, err := homedir.Expand("~/.ssh/authorized_keys")
 	cfe(err)
@@ -141,6 +143,9 @@ func main() {
 			Aliases: []string{"i", "get", "add"},
 			Usage:   "Install someone's key(s), sepcifying its e-mail or its username",
 			Action: func(c *cli.Context) error {
+				flag.StringVar(&key, "key", "key", "key")
+				flag.Parse()
+				fmt.Println(key)
 				// we can't just homedir.Expand("~/.ssh/authorized_e=keys") because it will fail if the file doesn't exist, so we basically just get user's home directory and add "/.ssh" at it
 				home, err := homedir.Expand("~/")
 				sshfolder := home + "/.ssh"
