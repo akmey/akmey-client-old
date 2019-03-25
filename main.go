@@ -13,7 +13,6 @@ import (
 	"regexp"
 	"sort"
 	"strings"
-	"flag"
 
 	_ "github.com/mattn/go-sqlite3"
 	homedir "github.com/mitchellh/go-homedir"
@@ -61,7 +60,7 @@ func fetchUser(user string, server string) (User, error) {
 }
 
 // fetchUserSpecificKey returns User named `user` on the `server`, only with a specific key
-func fetchUserSpecificKey(key string, server string, user string) (User, error) {
+func fetchUserSpecificKey(user string, key string, server string) (User, error) {
 	resp, err := resty.R().
 		SetHeader("Content-Type", "application/x-www-form-urlencoded").
 		SetHeader("Accept", "application/json").
@@ -105,7 +104,6 @@ func initFileDB(storagepath string, keyfilepath string) (*sql.DB, error) {
 func main() {
 	var server string
 	var dest string
-	var key string
 	re := regexp.MustCompile("#-- Akmey START --\n((?:.|\n)+)\n#-- Akmey STOP --")
 	defaultdest, err := homedir.Expand("~/.ssh/authorized_keys")
 	cfe(err)
@@ -143,9 +141,7 @@ func main() {
 			Aliases: []string{"i", "get", "add"},
 			Usage:   "Install someone's key(s), sepcifying its e-mail or its username",
 			Action: func(c *cli.Context) error {
-				flag.StringVar(&key, "key", "key", "key")
-				flag.Parse()
-				fmt.Println(key)
+				// use "akmey install user key" instead of user --key=, way simplier
 				// we can't just homedir.Expand("~/.ssh/authorized_e=keys") because it will fail if the file doesn't exist, so we basically just get user's home directory and add "/.ssh" at it
 				home, err := homedir.Expand("~/")
 				sshfolder := home + "/.ssh"
@@ -176,22 +172,32 @@ func main() {
 				bar := progressbar.New(3)
 				var tobeinserted string
 				// Step 1 : fetch the user
-				// let's verify if --key=<comment> has been entered
-				user, err := fetchUser(c.Args().First(), server)
-				cfe(err)
+				// let's verify if a key has been wanted
+				if c.Args().Get(1) != "" {
+					user, err := fetchUserSpecificKey(c.Args().First(), c.Args().Get(1), server)
+					cfe(err)
+						for _, key := range user.Keys {
+						stmt2.Exec(key.ID, key.Key, key.Comment, user.ID)
+						tobeinserted += key.Key + " " + key.Comment + "\n"
+					}
+					stmt.Exec(user.ID, user.Name, user.Email)
+				} else {
+					user, err := fetchUser(c.Args().First(), server)
+					cfe(err)
+					for _, key := range user.Keys {
+						stmt2.Exec(key.ID, key.Key, key.Comment, user.ID)
+						tobeinserted += key.Key + " " + key.Comment + "\n"
+					}
+					stmt.Exec(user.ID, user.Name, user.Email)
+				}
 				bar.Add(1)
 				//fmt.Println(user)
 				// Step 2 : Fetch the keys in a beautiful string
-				for _, key := range user.Keys {
-					stmt2.Exec(key.ID, key.Key, key.Comment, user.ID)
-					tobeinserted += key.Key + " " + key.Comment + "\n"
-				}
 				if tobeinserted == "" {
 					fmt.Println("\nThis user does not exist or doesn't have keys registered.")
 					os.Exit(1)
 				}
 				bar.Add(1)
-				stmt.Exec(user.ID, user.Name, user.Email)
 				dat, err := ioutil.ReadFile(dest)
 				cfe(err)
 				match := re.FindStringSubmatch(string(dat))
