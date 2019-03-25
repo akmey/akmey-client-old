@@ -115,7 +115,7 @@ func main() {
 
 	app.Name = "akmey"
 	app.Usage = "Add/Remove SSH keys to grant access to your friends, coworkers, etc..."
-	app.Version = "0.1.7-alpha"
+	app.Version = "0.1.8-alpha"
 	app.Copyright = "GNU GPL v3 or later"
 	app.Author = "Akmey contributors"
 	app.Email = "akmey@leonekmi.fr"
@@ -176,7 +176,7 @@ func main() {
 				if c.Args().Get(1) != "" {
 					user, err := fetchUserSpecificKey(c.Args().First(), c.Args().Get(1), server)
 					cfe(err)
-						for _, key := range user.Keys {
+					for _, key := range user.Keys {
 						stmt2.Exec(key.ID, key.Key, key.Comment, user.ID)
 						tobeinserted += key.Key + " " + key.Comment + "\n"
 					}
@@ -363,6 +363,7 @@ func main() {
 				cfe(err)
 				tx.Commit()
 				bar.Add(1)
+				println("\n")
 				return nil
 			},
 		},
