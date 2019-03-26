@@ -116,7 +116,7 @@ func main() {
 	app.Name = "akmey"
 	app.Usage = "Add/Remove SSH keys to grant access to your friends, coworkers, etc..."
 	app.Version = "0.1.8-alpha"
-	app.Copyright = "GNU GPL v3 or later"
+	app.Copyright = "The Unlicense"
 	app.Author = "Akmey contributors"
 	app.Email = "akmey@leonekmi.fr"
 
@@ -147,7 +147,7 @@ func main() {
 				sshfolder := home + "/.ssh"
 				_ = os.Mkdir(sshfolder, 755) // create the dir (w/ correct permissions) and ignores errors, according to stackoverflow. It's not that good but hey, it works ¯\_(ツ)_/¯
 				keyfile := sshfolder + "/authorized_keys"
-				os.OpenFile(keyfile, os.O_RDONLY|os.O_CREATE, 0644) // create the file (w/ corrects permissions) if it doesn't already exist, a bit better than for the ssh dir
+				os.OpenFile(keyfile, os.O_RDONLY|os.O_CREATE, 0755) // create the file (w/ corrects permissions) if it doesn't already exist, a bit better than for the ssh dir
 				db, err := initFileDB(storage, dest)
 				defer db.Close()
 				tx, err := db.Begin()
